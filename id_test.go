@@ -33,13 +33,13 @@ func TestParse(t *testing.T) {
 		t.Fatal("failed")
 	}
 	//2019-06-16 17:10:38.541 +0000 UTC
-	nano := id.Time() / 1000000
+	nano := id.UnixNano() / 1000000
 	t.Log(time.Unix((nano / 1000), ((nano % 1000) * 1000000)))
 }
 
 func TestMaxID(t *testing.T) {
 	id := ID((1 << 63) - 1)
-	t.Log(id, id.Time(), id.Node(), id.Sequence())
+	t.Log(id, id.UnixNano(), id.Node(), id.Sequence())
 	if id.Node() != 1023 {
 		t.Fatal("failed")
 	}
@@ -47,7 +47,7 @@ func TestMaxID(t *testing.T) {
 		t.Fatal("failed")
 	}
 	//2089-02-19 15:47:35.551 +0000 UTC
-	nano := id.Time() / 1000000
+	nano := id.UnixNano() / 1000000
 	t.Log(time.Unix((nano / 1000), ((nano % 1000) * 1000000)))
 }
 
@@ -64,4 +64,13 @@ func TestDefaultNodeID(t *testing.T) {
 	if nodeID != 461 {
 		t.Fatal("failed")
 	}
+}
+
+func TestTime(t *testing.T) {
+	DefaultNode()
+	id := GenerateID()
+	t.Log("time=", id.Time())
+	t.Log("Timestamp=", id.Timestamp())
+	t.Log("UnixMilli=", id.UnixMilli())
+	t.Log("UnixNano=", id.UnixNano())
 }

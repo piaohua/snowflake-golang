@@ -63,8 +63,8 @@ func main() {
 	fmt.Printf("Base2  ID: %s\n", id.Base2())
 	fmt.Printf("Base64 ID: %s\n", id.Base64())
 
-	// Print out the ID's timestamp
-	fmt.Printf("ID Time  : %d\n", id.Time())
+	// Print out the ID's time
+	fmt.Printf("ID Time  : %s\n", id.Time())
 
 	// Print out the ID's node number
 	fmt.Printf("ID Node  : %d\n", id.Node())

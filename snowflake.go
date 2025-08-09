@@ -69,20 +69,20 @@ type Node struct {
 
 // NewNode returns a new snowflake node that can be used to generate snowflake
 func NewNode(nodeID uint32) *Node {
-	if nodeID >= nodeidMax {
+	if nodeID > nodeidMax {
 		panic("Invalid nodeID")
 	}
 	datacenterID := nodeID >> datacenteridBits
-	workerID := nodeID & (-1 ^ (-1 << workeridBits))
+	workerID := nodeID & workeridMax
 	return NewWorker(datacenterID, workerID)
 }
 
 // NewWorker returns a new snowflake node that can be used to generate snowflake
 func NewWorker(datacenterID, workerID uint32) *Node {
-	if datacenterID >= datacenteridMax {
+	if datacenterID > datacenteridMax {
 		panic("Invalid datacenterID")
 	}
-	if workerID >= workeridMax {
+	if workerID > workeridMax {
 		panic("Invalid workerID")
 	}
 	return &Node{datacenterID: datacenterID, workerID: workerID}

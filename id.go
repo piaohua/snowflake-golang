@@ -81,18 +81,46 @@ func ParseIntBytes(id [8]byte) ID {
 	return ID(uint64(binary.BigEndian.Uint64(id[:])))
 }
 
-// Time returns an int64 unix timestamp in milliseconds of the snowflake ID time
-func (i ID) Time() int64 {
+// Time returns an local time of the snowflake ID time
+func (i ID) Time() time.Time {
+	ts := int64(uint64(i) >> timestampLeftShiftBits)
+	return epoch.Add(time.Duration(ts) * time.Millisecond)
+}
+
+// Timestamp returns an int64 unix timestamp in seconds of the snowflake ID time
+func (i ID) Timestamp() int64 {
+	ts := int64(uint64(i) >> timestampLeftShiftBits)
+	return epoch.Add(time.Duration(ts) * time.Millisecond).Unix()
+}
+
+// UnixMilli returns an int64 unix timestamp in milliseconds of the snowflake ID time
+func (i ID) UnixMilli() int64 {
+	ts := int64(uint64(i) >> timestampLeftShiftBits)
+	return epoch.Add(time.Duration(ts) * time.Millisecond).UnixMilli()
+}
+
+// UnixNano returns an int64 unix timestamp in nanoseconds of the snowflake ID time
+func (i ID) UnixNano() int64 {
 	ts := int64(uint64(i) >> timestampLeftShiftBits)
 	return epoch.Add(time.Duration(ts) * time.Millisecond).UnixNano()
 }
 
 // Node returns an uint64 of the snowflake ID node number
 func (i ID) Node() uint64 {
-	return (uint64(i) >> workeridLeftShiftBits) & (-1 ^ (-1 << nodeidBits))
+	return (uint64(i) >> workeridLeftShiftBits) & nodeidMax
 }
 
 // Sequence returns an uint64 of the snowflake sequence number
 func (i ID) Sequence() uint64 {
 	return uint64(i) & sequenceMask
+}
+
+// Center returns an uint64 of the snowflake ID node number
+func (i ID) Center() uint64 {
+	return ((uint64(i) >> workeridLeftShiftBits) & nodeidMax) >> datacenteridBits
+}
+
+// Worker returns an uint64 of the snowflake ID node number
+func (i ID) Worker() uint64 {
+	return ((uint64(i) >> workeridLeftShiftBits) & nodeidMax) & workeridMax
 }
